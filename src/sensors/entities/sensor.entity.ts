@@ -17,14 +17,23 @@ export class Sensor {
   @Column({ unique: true })
   name: string;
 
-  @Column()
-  lat: string;
+  @Column('decimal', { precision: 65, scale: 9 })
+  lat: number;
 
-  @Column()
-  lng: string;
+  @Column('decimal', { precision: 65, scale: 9 })
+  lng: number;
 
   @Column()
   state: string;
+
+  @Column('decimal', { precision: 6, scale: 2 })
+  red_umbral: number;
+
+  @Column('decimal', { precision: 6, scale: 2 })
+  yellow_umbral: number;
+
+  @Column('decimal', { precision: 6, scale: 2 })
+  green_umbral: number;
 
   @OneToMany(() => Reading, (reading) => reading.sensor)
   readings: Reading[];
