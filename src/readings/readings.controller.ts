@@ -17,7 +17,9 @@ export class ReadingsController {
 
   @Post()
   create(@Body() createReadingDto: CreateReadingDto) {
+    console.log(createReadingDto);
     return this.readingsService.create(createReadingDto);
+
   }
 
   @Get()

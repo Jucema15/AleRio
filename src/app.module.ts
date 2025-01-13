@@ -22,7 +22,7 @@ import { Reading } from './readings/entities/reading.entity';
       synchronize: true,
     }),
     UsersModule,
-    SensorsModule,
+    SensorsModule, 
     ReadingsModule,
   ],
   controllers: [AppController],
