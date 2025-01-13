@@ -15,7 +15,6 @@ export class ReadingsService {
   create(CreateReadingDto: CreateReadingDto) {
     const newReading = this.readingRepository.create({
       ...CreateReadingDto,
-      reading_date: new Date(),
     });
     return this.readingRepository.save(newReading);
   }

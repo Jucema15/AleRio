@@ -7,6 +7,7 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity({ name: 'sensors' })
@@ -35,9 +36,7 @@ export class Sensor {
   @Column('decimal', { precision: 6, scale: 2 })
   green_umbral: number;
 
-  @OneToMany(() => Reading, (reading) => reading.sensor)
+  @OneToMany(() => Reading, (readings) => readings.sensor)
   readings: Reading[];
 
-  @ManyToMany(() => UserEntitiy, (user) => user.sensors)
-  users: UserEntitiy[];
 }

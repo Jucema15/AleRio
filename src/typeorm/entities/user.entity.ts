@@ -30,7 +30,4 @@ export class UserEntitiy {
   @Column({ nullable: true })
   authStrategy: string;
 
-  @ManyToMany(() => Sensor, (sensor) => sensor.users)
-  @JoinTable({ name: 'subscription' })
-  sensors: Sensor[];
 }
