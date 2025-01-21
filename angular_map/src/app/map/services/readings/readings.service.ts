@@ -15,7 +15,7 @@ export class ReadingsService {
 
   setReadings() {
     return this.http
-      .post(`${this.host}/readings`, { reading_data: '2222111', sensorId: 1 })
+      .post(`${this.host}/readings`, { reading_data: '2222111', sensor_id: 1 })
       .pipe(map((res) => res));
   }
 }

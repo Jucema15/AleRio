@@ -18,7 +18,7 @@ export class Reading {
   @Column()
   sensor_id: number;
 
-  @Column({ unique: true })
+  @Column({})
   reading_date: Date; 
 
   @ManyToOne(() => Sensor, (sensor) => sensor.readings)
