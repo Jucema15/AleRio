@@ -69,9 +69,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   createMarkers() {
+    debugger;
+    let mark;
+    let tamaño;
     if (mapMarkers.length !== 0) {
-      mapMarkers.splice(0, 5);
-      for (let j = 0; j < mapMarkers.length; j++) {
+      /* mapMarkers.splice(0, 5); */
+      tamaño = mapMarkers.length;
+      for (let j = 0; j < tamaño; j++) {
+        debugger;
+        mark = document.getElementsByClassName('maplibregl-marker')[j];
+        if (mark !== undefined) {
+          mark.remove();
+        }
         mapMarkers[j].remove();
       }
     }
@@ -115,8 +124,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(mapMarkers);
   }
 
-  createReading() {
-    console.log('Creating readings')
+  //Función para insertar datos artificiales a la base de datos
+  /* createReading() {
+    console.log('Creating readings');
     const reading = this.readingsService.setReadings().subscribe(() => {});
   }
 

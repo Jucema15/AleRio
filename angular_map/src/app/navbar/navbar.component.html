@@ -1,3 +1,8 @@
 <div class="heading">
+  <select id="input_elem_sel" placeholder="Buscar río">
+    <option value="default">Seleccionar un río</option>
+    <option *ngFor="let marker of mapMarkers" value="">Other ...</option>
+  </select>
+
   <h1>This is my map App</h1>
 </div>
