@@ -87,6 +87,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const sensor = this.sensorService.getTasks().subscribe((data) => {
       sensorsData.push(data);
+      console.log('sensorsData');
       console.log(sensorsData);
 
       this.sensors = data as Sensor[];
@@ -128,7 +129,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   /* createReading() {
     console.log('Creating readings');
     const reading = this.readingsService.setReadings().subscribe(() => {});
-  }
+  } */
 
   ngOnDestroy() {
     this.map?.remove();
