@@ -31,6 +31,40 @@ if(!empty($_POST['sendval']) && !empty($_POST['sendval2']) )
 	} else {
 		echo "Error: " . $sql . "<br>" . $conn->error;
 	}
+	
+	$distance = (float)$distance;
+	$state = (int)$state;
+	
+	if($distance < 11){
+		$sql = "UPDATE `sensors` SET `state`='red' WHERE `id` = ".$state. ""; 
+		
+		if ($conn->query($sql) === TRUE) {
+			echo "Sensor status changed to red.";
+		} else {
+			echo "Error: " . $sql . "<br>" . $conn->error;
+		}
+	}
+	
+	if($distance >= 11 && $distance < 20){
+		$sql = "UPDATE `sensors` SET `state`='yellow' WHERE `id` = 1"; 
+
+		if ($conn->query($sql) === TRUE) {
+			echo "Sensor status changed to yellow.";
+		} else {
+			echo "Error: " . $sql . "<br>" . $conn->error;
+		}
+	}
+	
+	if($distance >= 20){
+		$sql = "UPDATE `sensors` SET `state`='green' WHERE `id` = 1"; 
+		
+		if ($conn->query($sql) === TRUE) {
+			echo "Sensor status changed to green.";
+		} else {
+			echo "Error: " . $sql . "<br>" . $conn->error;
+		}
+	}
+
 }
 
 
