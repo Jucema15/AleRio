@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { mapMarkers } from '../../environments/environment';
+/* import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +9,9 @@ import { mapMarkers } from '../../environments/environment';
 })
 export class NavbarComponent {
   constructor() {
-    mapMarkers;
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    let mapMarkers = []
+  }
 }
+ */

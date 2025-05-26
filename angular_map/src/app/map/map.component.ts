@@ -36,6 +36,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   sensor: string;
   subscription!: Subscription;
   markersCreation!: number;
+  markers: any;
 
   constructor(
     private sensorService: SensorsService,
@@ -44,6 +45,27 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sensors = [];
     this.sensor = '';
     mapMarkers;
+    this.markers = [
+      {
+        "id": 1,
+        "name": "Rio Cali",
+        "lat": "3.503517000",
+        "lng": "-76.491614000",
+        "state": "yellow",
+        "red_umbral": "30.00",
+        "yellow_umbral": "20.20",
+        "green_umbral": "10.00"
+    },
+    {
+        "id": 2,
+        "name": "Rio pance",
+        "lat": "3.403517000",
+        "lng": "-76.491614000",
+        "state": "yellow",
+        "red_umbral": "30.00",
+        "yellow_umbral": "20.20",
+        "green_umbral": "10.00"
+    }]
   }
 
   map: Map | undefined;
@@ -54,7 +76,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     config.apiKey = 'mdq66yB7LoGC4kpEy9Nx';
     const source = interval(10000);
     this.subscription = source.subscribe((val) => this.createMarkers());
-    this.subscription = source.subscribe((val) => this.createReading());
+
+    /* this.subscription = source.subscribe((val) => this.createReading()); */
   }
 
   ngAfterViewInit() {
@@ -69,15 +92,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   createMarkers() {
-    debugger;
-    let mark;
+/*     debugger;
+ */    let mark;
     let tamaño;
     if (mapMarkers.length !== 0) {
       /* mapMarkers.splice(0, 5); */
       tamaño = mapMarkers.length;
       for (let j = 0; j < tamaño; j++) {
-        debugger;
-        mark = document.getElementsByClassName('maplibregl-marker')[j];
+/*         debugger;
+ */        mark = document.getElementsByClassName('maplibregl-marker')[j];
         if (mark !== undefined) {
           mark.remove();
         }
@@ -108,7 +131,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
             new Popup().setHTML(
               `
               <h3>Nombre: Rio Cali</h3>
-              <h4>Último registro: ${24 + index} cm sobre el umbral</h4> `,
+              <h4>Último registro: ${24 + index} cm sobre el umbral</h4>
+              `,
             ),
           )
           .addTo(this.map);
@@ -116,8 +140,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         marker.addClassName('' + element.id);
         mapMarkers.push(marker);
         marker.on('mouseenter', function () {
-          debugger;
-          console.log('popup was opened');
+/*           debugger;
+ */          console.log('popup was opened');
         });
       }
     });
@@ -135,4 +159,20 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.map?.remove();
     this.subscription && this.subscription.unsubscribe();
   }
+
+  mapTravel(opt){
+    opt = opt.target.value - 1;
+    let lat = parseFloat(this.markers[opt].lat)
+    let lng = parseFloat(this.markers[opt].lng)
+    this.map?.flyTo({
+      center: [lng, lat],
+      zoom: 13,
+      speed: 0.2,
+      easing(t) {
+        return t;
+      }
+    })
+  }
 }
+
+
