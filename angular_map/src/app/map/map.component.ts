@@ -48,27 +48,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sensors = [];
     this.sensor = '';
     mapMarkers;
-    this.markers = [
-      {
-        "id": 1,
-        "name": "Rio Cali",
-        "lat": "3.503517000",
-        "lng": "-76.491614000",
-        "state": "yellow",
-        "red_umbral": "30.00",
-        "yellow_umbral": "20.20",
-        "green_umbral": "10.00"
-    },
-    {
-        "id": 2,
-        "name": "Rio pance",
-        "lat": "3.403517000",
-        "lng": "-76.491614000",
-        "state": "yellow",
-        "red_umbral": "30.00",
-        "yellow_umbral": "20.20",
-        "green_umbral": "10.00"
-    }]
+    this.markers = []
   }
 
   map: Map | undefined;
@@ -77,9 +57,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     config.apiKey = 'mdq66yB7LoGC4kpEy9Nx';
-    this.createMarkers();
 
-    // Ejecutar updateMarkersState cada cinco segundos (5000 ms)
+    // Primero carga los sensores y actualiza this.markers
+    this.sensorService.getTasks().subscribe((data) => {
+      this.sensors = data as Sensor[];
+      this.markers = this.sensors;
+
+      this.createMarkers();
+    });
+
     this.intervalId = setInterval(() => {
       this.updateMarkersState();
     }, 5000);
@@ -97,15 +83,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   createMarkers() {
-/*     debugger;
- */ let mark;
+    let mark;
     let tamaño;
     if (mapMarkers.length !== 0) {
-      /* mapMarkers.splice(0, 5); */
       tamaño = mapMarkers.length;
       for (let j = 0; j < tamaño; j++) {
-/*         debugger;
- */        mark = document.getElementsByClassName('maplibregl-marker')[j];
+        mark = document.getElementsByClassName('maplibregl-marker')[j];
         if (mark !== undefined) {
           mark.remove();
         }
@@ -113,51 +96,44 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    const sensor = this.sensorService.getTasks().subscribe((data) => {
-      sensorsData.push(data);
-      console.log('sensorsData');
-      console.log(sensorsData);
+    // Usa los datos ya cargados en this.sensors
+    for (let index = 0; index < this.sensors.length; index++) {
+      const element = this.sensors[index];
+      let status = '';
 
-      this.sensors = data as Sensor[];
-      for (let index = 0; index < this.sensors.length; index++) {
-        const element = this.sensors[index];
-        let status = '';
-
-        if (element.state === 'green') {
-          status = '#5cc433';
-        } else if (element.state === 'yellow') {
-          status = '#ebdd46';
-        } else if (element.state === 'red') {
-          status = '#ff0000';
-        }
-        const marker = new Marker({ color: status })
-          .setLngLat([element.lng, element.lat])
-          .setPopup(
-            new Popup().setHTML(
-              `
-              <h3>Nombre: Rio Cali</h3>
-              <h4>Último registro: ${24 + index} cm sobre el umbral</h4>
-              <app-sensor-popup
-                [sensorId]="${element.id}"
-                [sensorName]="${element.name}"
-                [sensorState]="${element.state}"
-                [sensorRedUmbral]="${element.red_umbral}"
-                [sensorYellowUmbral]="${element.yellow_umbral}"
-                [sensorGreenUmbral]="${element.green_umbral}"
-              ></app-sensor-popup>
-              `,
-            ),
-          )
-          .addTo(this.map);
-
-        marker.addClassName('' + element.id);
-        mapMarkers.push(marker);
-        marker.on('mouseenter', function () {
-/*           debugger;
- */          console.log('popup was opened');
-        });
+      if (element.state === 'green') {
+        status = '#5cc433';
+      } else if (element.state === 'yellow') {
+        status = '#ebdd46';
+      } else if (element.state === 'red') {
+        status = '#ff0000';
       }
-    });
+      const marker = new Marker({ color: status })
+        .setLngLat([element.lng, element.lat])
+        .setPopup(
+          new Popup().setHTML(
+            `
+            <h3>Nombre: Rio Cali</h3>
+            <h4>Último registro: ${24 + index} cm sobre el umbral</h4>
+            <app-sensor-popup
+              [sensorId]="${element.id}"
+              [sensorName]="${element.name}"
+              [sensorState]="${element.state}"
+              [sensorRedUmbral]="${element.red_umbral}"
+              [sensorYellowUmbral]="${element.yellow_umbral}"
+              [sensorGreenUmbral]="${element.green_umbral}"
+            ></app-sensor-popup>
+            `,
+          ),
+        )
+        .addTo(this.map);
+
+      marker.addClassName('' + element.id);
+      mapMarkers.push(marker);
+      marker.on('mouseenter', function () {
+        console.log('popup was opened');
+      });
+    }
     console.log('this.sensors');
     console.log(mapMarkers);
   }
@@ -192,6 +168,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sensorService.getTasks().subscribe((data: Object) => {
       const sensorsData = data as Sensor[];
       console.log('ACTUALIZANDO  ESTADOS DE LOS MARCADORES');
+      this.markers = sensorsData;
       for (let i = 0; i < this.sensors.length; i++) {
         const sensor = this.sensors[i];
         const updated = sensorsData.find(s => s.id === sensor.id);
