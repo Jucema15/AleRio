@@ -27,9 +27,14 @@ export class ReadingsController {
     return this.readingsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.readingsService.findOne(+id);
+  @Get(':sensor_id')
+  findOne(@Param('sensor_id') sensor_id: string) {
+    return this.readingsService.findOne(+sensor_id);
+  }
+
+  @Get('last-ten/:sensor_id')
+  findLastTen(@Param('sensor_id') sensor_id: string) {
+    return this.readingsService.findLastTen(+sensor_id);
   }
 
   @Patch(':id')

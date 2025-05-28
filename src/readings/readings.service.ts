@@ -23,15 +23,29 @@ export class ReadingsService {
     return this.readingRepository.find();
   }
 
-  findOne(id: number) {
-    return this.readingRepository.findOneBy({ id: id });
-  }
-
+  
   update(id: number, updateReadingDto: UpdateReadingDto) {
     return this.readingRepository.update({ id }, { ...updateReadingDto });
   }
-
+  
   remove(id: number) {
     return this.readingRepository.delete(id);
   }
+
+  async findOne(sensor_id: number) {
+    return this.readingRepository.findOne({
+      where: { sensor_id },
+      order: { id: 'DESC' }, // O usa la columna de fecha si tienes una, por ejemplo: createdAt: 'DESC'
+    });
+  }
+
+  async findLastTen(sensor_id: number) {
+  return this.readingRepository.find({
+    where: { sensor_id },
+    order: { id: 'DESC' }, // O usa createdAt: 'DESC' si tienes columna de fecha
+    take: 10,
+  });
+}
+
+  
 }

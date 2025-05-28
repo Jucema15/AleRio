@@ -13,6 +13,7 @@ import { SensorsService } from './services/sensor/sensors.service';
 import { interval, Subscription } from 'rxjs';
 import { mapMarkers, sensorsData } from '../../environments/environment';
 import { ReadingsService } from './services/readings/readings.service';
+import { SensorPopupComponent } from '../sensor-popup/sensor-popup.component';
 interface Sensor {
   id: number;
   name: string;
@@ -27,7 +28,7 @@ interface Sensor {
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [],
+  imports: [SensorPopupComponent],
   templateUrl: './map.component.html',
   styleUrl: './map.component.css',
 })
@@ -37,6 +38,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   subscription!: Subscription;
   markersCreation!: number;
   markers: any;
+
+  intervalId: any; //
 
   constructor(
     private sensorService: SensorsService,
@@ -74,10 +77,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     config.apiKey = 'mdq66yB7LoGC4kpEy9Nx';
-    const source = interval(10000);
-    this.subscription = source.subscribe((val) => this.createMarkers());
+    this.createMarkers();
 
-    /* this.subscription = source.subscribe((val) => this.createReading()); */
+    // Ejecutar updateMarkersState cada cinco segundos (5000 ms)
+    this.intervalId = setInterval(() => {
+      this.updateMarkersState();
+    }, 5000);
   }
 
   ngAfterViewInit() {
@@ -93,7 +98,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   createMarkers() {
 /*     debugger;
- */    let mark;
+ */ let mark;
     let tamaño;
     if (mapMarkers.length !== 0) {
       /* mapMarkers.splice(0, 5); */
@@ -132,6 +137,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
               `
               <h3>Nombre: Rio Cali</h3>
               <h4>Último registro: ${24 + index} cm sobre el umbral</h4>
+              <app-sensor-popup
+                [sensorId]="${element.id}"
+                [sensorName]="${element.name}"
+                [sensorState]="${element.state}"
+                [sensorRedUmbral]="${element.red_umbral}"
+                [sensorYellowUmbral]="${element.yellow_umbral}"
+                [sensorGreenUmbral]="${element.green_umbral}"
+              ></app-sensor-popup>
               `,
             ),
           )
@@ -158,6 +171,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.map?.remove();
     this.subscription && this.subscription.unsubscribe();
+
   }
 
   mapTravel(opt){
@@ -172,6 +186,31 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         return t;
       }
     })
+  }
+
+  updateMarkersState() {
+    this.sensorService.getTasks().subscribe((data: Object) => {
+      const sensorsData = data as Sensor[];
+      console.log('ACTUALIZANDO  ESTADOS DE LOS MARCADORES');
+      for (let i = 0; i < this.sensors.length; i++) {
+        const sensor = this.sensors[i];
+        const updated = sensorsData.find(s => s.id === sensor.id);
+        if (updated) {
+          sensor.state = updated.state;
+          let color = '';
+          if (sensor.state === 'green') {
+            color = '#5cc433';
+          } else if (sensor.state === 'yellow') {
+            color = '#ebdd46';
+          } else if (sensor.state === 'red') {
+            color = '#ff0000';
+          }
+          if (mapMarkers[i]) {
+            mapMarkers[i].getElement().getElementsByTagName("g")[2].attributes[0].value = color;
+          }
+        }
+      }
+    });
   }
 }
 
