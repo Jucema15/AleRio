@@ -1,0 +1,43 @@
+<div class="map-wrap">
+  <div class="heading">
+    <div class="selec_container">
+      <select
+        id="input_elem_sel"
+        placeholder="Buscar río"
+        (change)="mapTravel($event)"
+      >
+        <option value="default">Seleccionar un río</option>
+        @for (mark of markers; track mark.id) {
+        <option value="{{ mark.id }}">{{ mark.name }}</option>
+        }
+      </select>
+    </div>
+    <div class="semaforo_container">
+      <div class="light_container">
+        <div class="green_light"></div>
+        <div class="alert_text">Río seguro</div>
+      </div>
+      <div class="separator"></div>
+      <div class="light_container">
+        <div class="yellow_light"></div>
+        <div class="alert_text">Alerta amarilla</div>
+      </div>
+      <div class="separator"></div>
+      <div class="light_container">
+        <div class="red_light"></div>
+        <div class="alert_text">Alerta roja</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="map" #map></div>
+  <button class="map-bottom-left-btn" (click)="showSubscriptionWindow()">
+    Inscribirse
+  </button>
+  <app-subscription
+    *ngIf="showSubscription"
+    [visible]="showSubscription"
+    (closed)="closeSubscription()"
+  >
+  </app-subscription>
+</div>

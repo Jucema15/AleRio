@@ -9,9 +9,25 @@ import { SensorsModule } from './sensors/sensors.module';
 import { Sensor } from './sensors/entities/sensor.entity';
 import { ReadingsModule } from './readings/readings.module';
 import { Reading } from './readings/entities/reading.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailService } from './email/email.service';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.SMTP_HOST,
+        port: parseInt('1025', 10),
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      },
+      defaults: {
+        from: '"No Reply" <no-reply@tudominio.com>',
+      },
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -21,13 +37,14 @@ import { Reading } from './readings/entities/reading.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
-      synchronize: false, // ¡No usar en producción!
+      synchronize: true, // ¡No usar en producción!
     }),
     UsersModule,
-    SensorsModule, 
+    SensorsModule,
     ReadingsModule,
+    EmailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EmailService],
 })
 export class AppModule {}

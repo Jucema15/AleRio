@@ -46,6 +46,5 @@ export class ReadingsService {
     take: 10,
   });
 }
-
-  
+ 
 }

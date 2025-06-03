@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'readings' })
@@ -18,8 +19,8 @@ export class Reading {
   @Column()
   sensor_id: number;
 
-  @Column({})
-  reading_date: Date; 
+  @CreateDateColumn({ type: 'timestamp' })
+  reading_date: Date;
 
   @ManyToOne(() => Sensor, (sensor) => sensor.readings)
   @JoinColumn({ name: 'sensor_id' })
