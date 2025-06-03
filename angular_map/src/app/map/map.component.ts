@@ -124,7 +124,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         }else{
           growthRate = 0;
         }
-        debugger
         const marker = new Marker({ color: status })
           .setLngLat([element.lng, element.lat])
           .setPopup(

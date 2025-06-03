@@ -1,6 +1,14 @@
 <div class="subscription-backdrop" (click)="close()"></div>
 <div class="subscription-modal">
-  <h2>Suscripción</h2>
-  <p>¡Aquí va el contenido de tu ventana de suscripción!</p>
-  <button (click)="close()">Cerrar</button>
+  <div *ngIf="visible" class ="subscription-content">
+    <label for="sensorSelect">Selecciona un sensor:</label>
+    <div class="select-container">
+      <select id="sensorSelect" [(ngModel)]="selectedSensorId">
+        <option *ngFor="let sensor of sensors" [value]="sensor.id">
+          {{ sensor.name }}
+        </option>
+      </select>
+    </div>
+    <button (click)="close()">Cerrar</button>
+  </div>
 </div>
