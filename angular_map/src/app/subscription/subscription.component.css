@@ -121,3 +121,60 @@ select {
     }
   }
 }
+
+#emailInput {
+  width: 100%;
+  padding: 8px 12px;
+  margin: 8px 0 16px 0;
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+#emailInput:focus {
+  border-color: #1976d2;
+  outline: none;
+  background-color: #f5faff;
+}
+
+button {
+  padding: 10px 22px;
+  margin: 10px 8px 0 0;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Botón Registrar (primer botón) */
+button:first-of-type {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+button:first-of-type:hover {
+  background-color: #1256a3;
+}
+
+/* Botón Eliminar (segundo botón) */
+button:nth-of-type(2) {
+  background-color: #e53935;
+  color: #fff;
+}
+
+button:nth-of-type(2):hover {
+  background-color: #b71c1c;
+}
+
+/* Botón Cerrar (tercer botón) */
+button:last-of-type {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+button:last-of-type:hover {
+  background-color: #bdbdbd;
+}

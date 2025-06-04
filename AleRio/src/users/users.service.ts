@@ -28,4 +28,19 @@ export class UsersService {
   deleteUser(id: number) {
     return this.userRepository.delete(id);
   }
+
+  async findByEmailAndComunicationDir(email: string, comunication_dir: string) {
+    return this.userRepository.findOne({
+      where: {
+        email,
+        comunication_dir,
+      },
+    });
+  }
+
+  async findAllByComunicationDir(comunication_dir: string) {
+    return this.userRepository.find({
+      where: { comunication_dir },
+    });
+  }
 }

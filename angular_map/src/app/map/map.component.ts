@@ -17,6 +17,8 @@ import { ReadingsService } from './services/readings/readings.service';
 import { SensorPopupComponent } from '../sensor-popup/sensor-popup.component';
 import { SubscriptionComponent } from '../subscription/subscription.component';
 import { NgIf } from '@angular/common';
+import { UserService } from './services/user/user.service'; // Asegúrate de importar el servicio
+import { EmailService } from './services/email/email.service'; // Asegúrate de importar el servicio de email
 
 interface Sensor {
   id: number;
@@ -45,10 +47,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   showSubscription = false;
 
   intervalId: any; //
+  alertMonitoringIntervalId: any; // Agrega esta propiedad para el intervalo
 
   constructor(
     private sensorService: SensorsService,
     private readingsService: ReadingsService,
+    private userService: UserService, // <-- Agrega esto
+    private emailService: EmailService // <-- Agrega esto
   ) {
     this.sensors = [];
     this.sensor = '';
@@ -74,11 +79,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.intervalId = setInterval(() => {
       this.updateMarkersState();
     }, 5000);
+
+    // Ejecuta alertMonitoring periódicamente cada 10 segundos (ajusta el tiempo si lo deseas)
+    this.alertMonitoringIntervalId = setInterval(() => {
+      this.alertMonitoring();
+    }, 5000);
   }
 
   ngAfterViewInit() {
     const initialState = { lng: -76.5225, lat: 3.43722, zoom: 11 };
-    console.log('Checkpoint');
     this.map = new Map({
       container: this.mapContainer.nativeElement,
       style: MapStyle.STREETS,
@@ -157,20 +166,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       });
     }
-    console.log('this.sensors');
-    console.log(mapMarkers);
   }
 
-  //Función para insertar datos artificiales a la base de datos
-  /* createReading() {
-    console.log('Creating readings');
-    const reading = this.readingsService.setReadings().subscribe(() => {});
-  } */
 
   ngOnDestroy() {
     this.map?.remove();
     this.subscription && this.subscription.unsubscribe();
-
+    clearInterval(this.intervalId);
+    clearInterval(this.alertMonitoringIntervalId); // Limpia el intervalo de alertMonitoring
   }
 
   mapTravel(opt){
@@ -190,7 +193,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   updateMarkersState() {
     this.sensorService.getTasks().subscribe((data: Object) => {
       const sensorsData = data as Sensor[];
-      console.log('ACTUALIZANDO  ESTADOS DE LOS MARCADORES');
       this.markers = sensorsData;
       for (let i = 0; i < this.sensors.length; i++) {
         const sensor = this.sensors[i];
@@ -254,13 +256,52 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showSubscriptionWindow() {
-    console.log('showSubscriptionWindow');
     this.showSubscription = true;
   }
 
   closeSubscription() {
-    console.log('closeSubscription');
     this.showSubscription = false;
+  }
+
+  // Función que se ejecuta periódicamente
+  alertMonitoring() {
+    for (let i = 0; i < this.sensors.length; i++) {
+      const sensor = this.sensors[i];
+      this.readingsService.getLastTenReadings(sensor.id).subscribe((readings: Object) => {
+        let reverseArray = readings as any[];
+        const readingsArray = reverseArray.reverse();
+        if (readingsArray.length > 1) {
+          let totalGrowth = 0;
+          for (let j = 1; j < readingsArray.length; j++) {
+            const prev = readingsArray[j - 1].reading_data;
+            const curr = readingsArray[j].reading_data;
+            totalGrowth += (curr - prev);
+          }
+          const avgGrowth = totalGrowth / (readingsArray.length - 1);
+
+          const lastReading = readingsArray[readingsArray.length - 1].reading_data;
+          const projectedLevel = lastReading + avgGrowth * 6;
+
+          if (projectedLevel >= sensor.red_umbral) {
+            this.userService.getAllByComunicationDir(sensor.id).subscribe((usersObj: Object) => {
+              const users = usersObj as any[];
+              users.forEach(user => {
+                if (user.email) {
+                  this.emailService.sendEmail(user.email).subscribe({
+                    next: () => {
+                      console.log(``);
+                    },
+                    error: (err) => {
+                      console.error(``, err);
+                    }
+                  });
+                }
+              });
+            });
+          } 
+        } 
+      });
+    }
   }
 }
 

@@ -4,11 +4,22 @@
     <label for="sensorSelect">Selecciona un sensor:</label>
     <div class="select-container">
       <select id="sensorSelect" [(ngModel)]="selectedSensorId">
+        <option value="" disabled selected>Seleccionar un río</option>
         <option *ngFor="let sensor of sensors" [value]="sensor.id">
           {{ sensor.name }}
         </option>
       </select>
     </div>
+    <label for="emailInput">Correo electrónico:</label>
+    <input
+      id="emailInput"
+      type="email"
+      [(ngModel)]="email"
+      placeholder="Ingresa tu correo"
+      required
+    />
+    <button (click)="register()">Registrar</button>
+    <button (click)="deleteSubscription()">Eliminar</button>
     <button (click)="close()">Cerrar</button>
   </div>
 </div>
