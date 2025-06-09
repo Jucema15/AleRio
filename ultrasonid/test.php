@@ -1,9 +1,13 @@
 <?php 
 
-$hostname = "localhost"; 
-$username = "root"; 
-$password = ""; 
-$database = "test"; 
+$hostname = "nombre_del_servidor"; // Replace with your server name or IP address
+// Example: "localhost" 
+$username = "nombre_de_usuario"; // Replace with your MySQL username
+// Example: "root"
+$password = "password"; // Replace with your MySQL password
+// Example: "password123"
+$database = "nombre_de_base_de_datos"; // Replace with your MySQL database name
+// Example: "ultrasonid_db"
 
 $conn = mysqli_connect($hostname, $username, $password, $database);
 

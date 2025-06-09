@@ -3,9 +3,9 @@
 #include <Arduino_JSON.h>
 #include <SPI.h>
 // 2025
-#define HOST "localhost" //Esto se deja quieto
-#define WIFI_SSID "Flia Mantilla" //El nombre de tu red
-#define WIFI_PASSWORD "5645485MR" // La contraseña de tu red
+#define HOST "nombreDeTuIp" // El nombre del host o IP de tu servidor
+#define WIFI_SSID "nombreDeTuRedWifi" //El nombre de tu red
+#define WIFI_PASSWORD "contraseñaDeLaRedWifi" // La contraseña de tu red
 //define sound speed in cm/uS
 #define SOUND_SPEED 0.034
 #define CM_TO_INCH 0.393701
@@ -76,7 +76,7 @@ void loop()
   Serial.print("Sending data: ");
   Serial.println(postData);
 
-  http.begin(client, "http://192.168.1.6/ultrasonid/test.php"); //Aqui pones tu ip (Ejecutas el ipconfig en la consola de windows) y la dirección de tu main de php
+  http.begin(client, "http://direcciónDeTuIp/ultrasonid/test.php"); //Aqui pones tu ip (Ejecutas el ipconfig en la consola de windows) y la dirección de tu main de php
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
   int httpCode = http.POST(postData);
